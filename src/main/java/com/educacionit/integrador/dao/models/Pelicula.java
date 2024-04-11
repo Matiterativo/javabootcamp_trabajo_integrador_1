@@ -4,6 +4,11 @@ import java.util.List;
 
 public class Pelicula {
 	
+	@Override
+	public String toString() {
+		return "Pelicula [codigo=" + codigo + ", titulo=" + titulo + ", urlSitioOficial=" + urlSitioOficial + "]";
+	}
+
 	private int codigo;
     private String titulo;
     private String urlSitioOficial;
