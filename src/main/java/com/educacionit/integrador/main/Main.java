@@ -2,9 +2,14 @@ package com.educacionit.integrador.main;
 import java.util.List;
 import java.util.Scanner;
 
+import com.educacionit.integrador.dao.GeneroDao;
+import com.educacionit.integrador.dao.GeneroDaoImpl;
 import com.educacionit.integrador.dao.PeliculaDao;
 import com.educacionit.integrador.dao.PeliculaDaoImpl;
+import com.educacionit.integrador.dao.PeliculaGeneroDao;
+import com.educacionit.integrador.dao.PeliculaGeneroDaoImpl;
 import com.educacionit.integrador.dao.exceptions.DBManagerException;
+import com.educacionit.integrador.dao.models.Genero;
 import com.educacionit.integrador.dao.models.Pelicula;
 import com.educacionit.integrador.menu.Menu;
 
@@ -114,25 +119,40 @@ public class Main {
         do {
 	    	System.out.println("\n***** Búsqueda de películas por género *****\n");
 	    	
-	    	//Obtener los generos e imprimirlos	    	
-	    	//El siguiente listado es de ejemplo
-			
-			System.out.println("1. Acción");
-			System.out.println("2. Romántica");
-			System.out.println("3. Terror");
-			System.out.println("4. Suspenso");
+	    	GeneroDao generoDao = new GeneroDaoImpl();
 	    	
-	    	Integer genero = Menu.obtenerOpcion(teclado);	    	
+	    	List<Genero> generos;
+			try {
+				generos = generoDao.obtenerTodos();
+				for (Genero genero : generos) {
+	                System.out.println(genero.getId() + ". " + genero.getNombre());
+	            }  
+			} catch (DBManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}    	
+	    	  	
 	    	
-	    	//Cambiar genero al nombre del genero
-	    	System.out.println("\nResultados de su búsqueda para el género \"" + genero + "\": \n");
+	    	PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
 	    	
-	    	//El siguiente listado es de ejemplo
-	    		
-			System.out.println("1. El padrino");
-			System.out.println("2. The Matrix");
-			System.out.println("3. Titanic");
-			System.out.println("4. V de venganza");        
+	    	Integer idGenero = Menu.obtenerOpcion(teclado);
+	    	
+	    	List<Pelicula> peliculas;
+	    	
+	    	try {
+				peliculas = peliculaGeneroDao.buscarPorGenero(idGenero);
+				
+	        	System.out.println("\nResultados de su búsqueda para el ǵenero " + idGenero + ": \n");
+				
+				for (Pelicula pelicula : peliculas) {
+	                System.out.println(pelicula.getCodigo() + ". " + pelicula.getTitulo());
+	            }
+				
+			} catch (DBManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
+	    	
         	
         	Menu.imprimirSubmenuBusqueda();
         		
