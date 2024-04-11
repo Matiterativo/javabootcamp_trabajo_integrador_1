@@ -32,7 +32,7 @@ public class Main {
         	
         	Menu.imprimirMenuPrincipal();
         	
-        	opcion = Menu.obtenerOpcion(teclado);
+        	opcion = obtenerOpcion("\nIngrese la opción deseada: \n");
         	
         	switch (opcion) {
             case Menu.MENU_PRINCIPAL_BUSCAR_POR_TITULO:
@@ -48,7 +48,7 @@ public class Main {
             	System.out.println("\nGracias por utilizar PELIGESTION!");
                 break;
             default:            	
-                System.out.println("Opción inválida. Por favor ingrese una opción válida \n");
+                System.out.println("\nOpción inválida. Por favor ingrese una opción válida \n");
         	}        	
         	
         } while (opcion !=0);        
@@ -67,113 +67,134 @@ public class Main {
     }
     
     private static void buscarPeliculasPorTitulo() {
-  
-        Integer opcion = null;
-           
-        do {
-        	
-        	System.out.println("\n***** Búsqueda de películas por título *****");
-        	System.out.println("\nIngrese el título o parte del mismo para buscar: ");
-        
-        	String tituloBusqueda = teclado.nextLine();       	
-        	
-        	PeliculaDao peliculaDao = new PeliculaDaoImpl();
-        	
-        	List<Pelicula> peliculas;
-        	
-			try {
-				peliculas = peliculaDao.buscarPorTitulo(tituloBusqueda);
-				
-	        	System.out.println("\nResultados de su búsqueda para el texto \"" + tituloBusqueda + "\": \n");
-				
-				for (Pelicula pelicula : peliculas) {
-	                System.out.println(pelicula.getCodigo() + ". " + pelicula.getTitulo());
-	            }
-				
-			} catch (DBManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-        	
-        	Menu.imprimirSubmenuBusqueda();
-        		
-        	opcion= Menu.obtenerOpcion(teclado);
-        	
-        	switch (opcion) {
-            case Menu.MENU_BUSQUEDA_BUSCAR_POR_TITULO:
-                continue;
-            case Menu.MENU_BUSQUEDA_DETALLES_PELICULA:
-            	verDetallesPelicula();
-                continue;
-            case Menu.MENU_SALIR:
-            	break;
-            default:            	
-                System.out.println("Opción inválida. Por favor ingrese una opción válida \n");
-        	}        	
-        	
-        }while (opcion !=0);    
+         	
+    	System.out.println("\n***** Búsqueda de películas por título *****");
+    	System.out.println("\nIngrese el título o parte del mismo para buscar: ");
+    
+    	String tituloBusqueda = teclado.nextLine();       	
     	
+    	PeliculaDao peliculaDao = new PeliculaDaoImpl();
+    	
+    	List<Pelicula> peliculas;
+    	
+		try {
+			peliculas = peliculaDao.buscarPorTitulo(tituloBusqueda);
+			
+        	System.out.println("\nResultados de su búsqueda para el texto \"" + tituloBusqueda + "\": \n");
+        	
+        	
+        	imprimirPeliculas(peliculas);            
+            
+            Integer codigo=null;
+    		
+    		do {
+    			
+    			codigo = obtenerOpcion("\nIngrese el código de la película para ver sus detalles (0 para volver al menú): \n");
+    			
+    			boolean encontrado = false;
+    			
+    			for (Pelicula pelicula : peliculas) {
+                    if (pelicula.getCodigo() == codigo) {
+                        encontrado = true;
+                        verDetallesPelicula(codigo);
+                        break;
+                    }
+                }
+                
+                if (!encontrado && codigo != 0) {
+                    System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
+                }			
+    			
+    		} while (codigo != 0 );     
+	
+		} catch (DBManagerException e) {
+			e.printStackTrace();
+		}	
+	
     }
     
     private static void buscarPeliculasPorGenero() {
     	
-    	Integer opcion = null;
-        do {
-	    	System.out.println("\n***** Búsqueda de películas por género *****\n");
-	    	
-	    	GeneroDao generoDao = new GeneroDaoImpl();
-	    	
-	    	List<Genero> generos;
-			try {
-				generos = generoDao.obtenerTodos();
-				for (Genero genero : generos) {
-	                System.out.println(genero.getId() + ". " + genero.getNombre());
-	            }  
-			} catch (DBManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}    	
-	    	  	
-	    	
-	    	PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
-	    	
-	    	Integer idGenero = Menu.obtenerOpcion(teclado);
-	    	
-	    	List<Pelicula> peliculas;
-	    	
-	    	try {
-				peliculas = peliculaGeneroDao.buscarPorGenero(idGenero);
-				
-	        	System.out.println("\nResultados de su búsqueda para el ǵenero " + idGenero + ": \n");
-				
-				for (Pelicula pelicula : peliculas) {
-	                System.out.println(pelicula.getCodigo() + ". " + pelicula.getTitulo());
-	            }
-				
-			} catch (DBManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}	
-	    	
+    	System.out.println("\n***** Búsqueda de películas por género *****\n");
+    	
+    	GeneroDao generoDao = new GeneroDaoImpl();
+    	
+    	List<Genero> generos;
+    	
+		try {
+			generos = generoDao.obtenerTodos();
+			
+			imprimirGeneros(generos);
+            
+            PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
+            
+        	boolean encontrado = false;
         	
-        	Menu.imprimirSubmenuBusqueda();
-        		
-        	opcion= Menu.obtenerOpcion(teclado);
-        	
-        	switch (opcion) {
-            case Menu.MENU_BUSQUEDA_BUSCAR_POR_TITULO:
-            	continue;
-            case Menu.MENU_BUSQUEDA_DETALLES_PELICULA:
-            	verDetallesPelicula();
-                break;
-            case Menu.MENU_SALIR:
-            	break;
-            default:            	
-                System.out.println("Opción inválida. Por favor ingrese una opción válida \n");
-        	}        	
-        	
-        }while (opcion !=0);    
-		
+        	Integer idGenero=null;
+        	Genero generoEncontrado=null;
+            
+      		do {
+      			idGenero = obtenerOpcion("\nIngrese el id del género deseado: \n");
+      			
+      			for (Genero genero : generos) {
+                      if (genero.getId() == idGenero) {
+                          encontrado = true;
+                          generoEncontrado = genero;
+                      }
+                  }
+                  
+                  if (!encontrado) {
+                      System.out.println("\nEl id del género no se encuentra entre los disponibles.");
+                  }		
+                  
+      			
+      		} while (!encontrado);  
+      		
+      		List<Pelicula> peliculas;
+           	
+           	try {
+       			peliculas = peliculaGeneroDao.buscarPeliculaPorGenero(idGenero);
+       			
+       			System.out.println("\nResultados de su búsqueda para el género \"" + generoEncontrado.getNombre() + "\": ");
+      
+               	imprimirPeliculas(peliculas);
+                 
+                Integer codigo=null;
+         		
+         		do {
+         			
+         			codigo = obtenerOpcion("\nIngrese el código de la película para ver sus detalles (0 para volver al menú): \n");
+         			
+         			encontrado = false;
+         			
+         			for (Pelicula pelicula : peliculas) {
+                         if (pelicula.getCodigo() == codigo) {
+                             encontrado = true;
+                             verDetallesPelicula(codigo);
+                             break;
+                         }
+                     }
+                     
+                     if (!encontrado && codigo != 0) {
+                         System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
+                     }			
+         			
+         		} while (codigo != 0 );     
+                
+                 
+       			
+       		} catch (DBManagerException e) {
+       			// TODO Auto-generated catch block
+       			e.printStackTrace();
+       		}	
+            
+         
+			
+		} catch (DBManagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}    	
+    	
     	
     };
     
@@ -188,7 +209,7 @@ public class Main {
 	    	Menu.imprimirSubmenuAdministracionPeliculas();
 	    	
 	    	//Pido al usuario opcion
-	    	opcion= Menu.obtenerOpcion(teclado);
+	    	opcion= obtenerOpcion("\nIngrese la opción deseada: \n");
 	    	
 	    	//Dependiendo de la opcion llamo al metodo correspondiente
 	    	switch (opcion) {
@@ -210,21 +231,15 @@ public class Main {
     }
     
     
-    private static void verDetallesPelicula() {
+    private static void verDetallesPelicula(Integer codigo) {
     	
-    	System.out.println("\n***** Ver detalles de pelicula por id *****\n");
+    	System.out.println("\n***** Ver detalles de pelicula *****\n");
 	    	
 		try {
 			
-			System.out.println("Ingrese el id de la pelicula: \n");
-			
-			Integer idPelicula = teclado.nextInt();
-			
-			teclado.nextLine();
-			
 			PeliculaDao peliculaDao = new PeliculaDaoImpl();
 			
-			Pelicula pelicula = peliculaDao.obtener(idPelicula);
+			Pelicula pelicula = peliculaDao.obtener(codigo);
 			
 			System.out.println(pelicula.toString());	
 			
@@ -266,9 +281,10 @@ public class Main {
     	
 		try {
 			generos = generoDao.obtenerTodos();
-			for (Genero genero : generos) {
-                System.out.println(genero.getId() + ". " + genero.getNombre());
-            }  
+			
+			imprimirGeneros(generos);
+			
+			
 		} catch (DBManagerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -344,5 +360,38 @@ public class Main {
     private static void eliminarPelicula() {
     	
     }
+    
+  //Obtiene una opcion (entero valido) para operacion de menu
+    public static int obtenerOpcion(String mensaje) {
+        System.out.print(mensaje);
+        while (!teclado.hasNextInt()) {
+            System.out.println("Por favor, ingrese un número válido.");
+            System.out.print(mensaje);
+            teclado.next();
+        }
+        int opcion = teclado.nextInt();
+        teclado.nextLine();
+        return opcion;
+    }
+    
+    public static void imprimirPeliculas(List<Pelicula> peliculas) {
+    	System.out.printf("\n%-10s | %-10s \n", "Código", "Título");
+        System.out.println("-----------------------------");
+        
+        for (Pelicula pelicula : peliculas) {
+            System.out.printf(" %-10d | %-10s \n", pelicula.getCodigo(), pelicula.getTitulo());
+        }
+    }
+    
+    public static void imprimirGeneros(List<Genero> generos) {
+    	System.out.println("\nGéneros disponibles \n");
+    	System.out.printf(" %-10s | %-10s \n", "Id", "Nombre");
+        System.out.println("-----------------------------");
+        
+        for (Genero genero : generos) {
+            System.out.printf(" %-10d | %-10s \n", genero.getId(), genero.getNombre());
+        }
+    }
+    
 }
 
