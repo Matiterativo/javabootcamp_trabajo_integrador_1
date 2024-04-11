@@ -14,7 +14,7 @@ import com.educacionit.integrador.dao.models.Pelicula;
 public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
 
 	@Override
-	public List<Pelicula> buscarPorGenero(int idGenero) throws DBManagerException {
+	public List<Pelicula> buscarPeliculaPorGenero(int idGenero) throws DBManagerException {
 		List<Pelicula> peliculas = new ArrayList<>();
 	    String query = "SELECT p.id AS codigo, "
 	    		+ "p.titulo AS titulo  "

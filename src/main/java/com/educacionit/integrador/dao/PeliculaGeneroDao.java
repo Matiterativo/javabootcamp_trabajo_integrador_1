@@ -8,7 +8,7 @@ import com.educacionit.integrador.dao.models.Pelicula;
 public interface PeliculaGeneroDao {
 
 
-	List<Pelicula> buscarPorGenero(int idGenero) throws DBManagerException;
+	List<Pelicula> buscarPeliculaPorGenero(int idGenero) throws DBManagerException;
 
 	void agregarGenero(Integer codigoPelicula, Integer idGenero) throws DBManagerException;
 	
