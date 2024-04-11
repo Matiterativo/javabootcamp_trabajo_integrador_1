@@ -7,7 +7,7 @@ public class Pelicula {
 	private int codigo;
     private String titulo;
     private String urlSitioOficial;
-    private String imagenPromocional;
+    private byte[] imagenPromocional;
     private List<Genero> generos;
     
  
@@ -27,8 +27,16 @@ public class Pelicula {
 		this.urlSitioOficial = urlSitioOficial;
 		this.codigo = codigo;
 	}
-	
-	
+
+
+	public Pelicula(String titulo, String urlSitioOficial, byte[] imagenPromocional) {
+		super();
+		this.titulo = titulo;
+		this.urlSitioOficial = urlSitioOficial;
+		this.imagenPromocional = imagenPromocional;
+	}
+
+
 
 	public String getTitulo() {
 		return titulo;
@@ -46,11 +54,11 @@ public class Pelicula {
 		this.urlSitioOficial = urlSitioOficial;
 	}
 
-	public String getImagenPromocional() {
+	public byte[] getImagenPromocional() {
 		return imagenPromocional;
 	}
 
-	public void setImagenPromocional(String imagenPromocional) {
+	public void setImagenPromocional(byte[] imagenPromocional) {
 		this.imagenPromocional = imagenPromocional;
 	}
 

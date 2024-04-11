@@ -9,6 +9,6 @@ public interface GeneroDao {
 
 	List<Genero> obtenerTodos() throws DBManagerException;
 
-	
+	Genero obtener(Integer id) throws DBManagerException;
 	
 }

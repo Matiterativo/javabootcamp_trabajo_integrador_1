@@ -4,11 +4,11 @@ public class DBManagerException extends Exception {
 	
 	/*
 	 * Error 1: conectar a la db
-	 * Error 2: buscar provincias por pais
-	 * Error 3: obtener paises
-	 * Error 4: insertar provincia
-	 * Error 5: modificar provincia
-	 * Error 6: eliminar provincia
+	 * Error 2: buscar peliculas por titulo
+	 * Error 3: obtener peliculas
+	 * Error 4: insertar pelicula
+	 * Error 5: modificar pelicula
+	 * Error 6: eliminar pelicula
 	 * Error 7: cerrar conexion a la db
 	 */
 	
@@ -48,13 +48,13 @@ public class DBManagerException extends Exception {
 		case ERROR_2: 
 			return "Se produjo un error al buscar peliculas por titulo: " + super.getMessage();
 		case ERROR_3: 
-			return "Se produjo un error al obtener los paises: " + super.getMessage();
+			return "Se produjo un error al obtener las peliculas: " + super.getMessage();
 		case ERROR_4: 
-			return "Se produjo un error al agregar una provincia: " + super.getMessage();
+			return "Se produjo un error al agregar una pelicula: " + super.getMessage();
 		case ERROR_5: 
-			return "Se produjo un error al modificar la provincia: " + super.getMessage();
+			return "Se produjo un error al modificar la pelicula: " + super.getMessage();
 		case ERROR_6: 
-			return "Se produjo un error al eliminar la provincia: " + super.getMessage();
+			return "Se produjo un error al eliminar la pelicula: " + super.getMessage();
 		case ERROR_7: 
 			return "Se produjo un error cerrando la conexión a la base de datos: " + super.getMessage();		
 		default:

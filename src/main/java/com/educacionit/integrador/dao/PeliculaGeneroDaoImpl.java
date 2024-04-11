@@ -47,4 +47,29 @@ public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
 	    return peliculas;
 	}
 
-}
+	@Override
+	public void agregarGenero(Integer codigoPelicula, Integer idGenero) throws DBManagerException {
+		String query = "INSERT INTO peliculas_generos (pelicula_id, genero_id) VALUES (?, ?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+
+            statement.setInt(1, codigoPelicula);
+            statement.setInt(2, idGenero);
+
+            int rowsAffected = statement.executeUpdate();
+
+            if (rowsAffected == 0) {
+                throw new DBManagerException(DBManagerException.ERROR_4,
+                        "No se pudo agregar la relación entre la película y el género.");
+            }
+
+        } catch (SQLException ex) {
+            throw new DBManagerException(DBManagerException.ERROR_4,
+                    "Error al agregar la relación entre la película y el género.", ex);
+        }
+    }
+
+}		
+	
+
