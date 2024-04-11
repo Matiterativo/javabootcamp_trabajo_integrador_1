@@ -10,6 +10,17 @@ public class Pelicula {
     private String imagenPromocional;
     private List<Genero> generos;
     
+ 
+    
+    
+	public Pelicula(int codigo, String titulo) {
+		super();
+		this.codigo = codigo;
+		this.titulo = titulo;
+	}
+
+
+
 	public Pelicula(int codigo, String titulo, String urlSitioOficial) {
 		super();
 		this.titulo = titulo;

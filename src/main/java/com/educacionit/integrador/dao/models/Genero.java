@@ -4,8 +4,14 @@ public class Genero {
 	
 	private int id;
     private String nombre;
-	
-    public Genero(String nombre) {
+    
+    public Genero(int id, String nombre) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+	}
+
+	public Genero(String nombre) {
 		super();
 		this.nombre = nombre;
 	}
