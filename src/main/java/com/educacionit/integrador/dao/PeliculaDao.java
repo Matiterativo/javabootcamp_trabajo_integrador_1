@@ -9,6 +9,10 @@ public interface PeliculaDao {
 
 
 	List<Pelicula> buscarPorTitulo(String titulo) throws DBManagerException;
+	
+	List<Pelicula> obtenerTodas() throws DBManagerException;
+	
+	Pelicula obtener(Integer id) throws DBManagerException;
 
 	int insertar(Pelicula pelicula) throws DBManagerException;
 	

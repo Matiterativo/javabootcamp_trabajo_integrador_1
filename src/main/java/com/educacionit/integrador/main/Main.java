@@ -104,7 +104,7 @@ public class Main {
                 continue;
             case Menu.MENU_BUSQUEDA_DETALLES_PELICULA:
             	verDetallesPelicula();
-                break;
+                continue;
             case Menu.MENU_SALIR:
             	break;
             default:            	
@@ -212,7 +212,30 @@ public class Main {
     
     private static void verDetallesPelicula() {
     	
+    	System.out.println("\n***** Ver detalles de pelicula por id *****\n");
+	    	
+		try {
+			
+			System.out.println("Ingrese el id de la pelicula: \n");
+			
+			Integer idPelicula = teclado.nextInt();
+			
+			teclado.nextLine();
+			
+			PeliculaDao peliculaDao = new PeliculaDaoImpl();
+			
+			Pelicula pelicula = peliculaDao.obtener(idPelicula);
+			
+			System.out.println(pelicula.toString());	
+			
+			//Buscar e imprimir generos de la pelicula con el Dao peliculagenerodao
+			
+		} catch (DBManagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	          	
     }
+    
     private static void altaPelicula() {
 
 

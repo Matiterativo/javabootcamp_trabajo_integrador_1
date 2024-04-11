@@ -68,11 +68,6 @@ public class GeneroDaoImpl implements GeneroDao, ConnectionDB{
 	            }
 	        }
 
-	        /*
-	        if (provincias.isEmpty()) {
-	            throw new DBManagerException(DBManagerException.ERROR_2, "No se encontraron provincias para el país indicado.");
-	        }*/
-
 	    } catch (SQLException ex) {
 	        throw new DBManagerException(DBManagerException.ERROR_2, "No se pudo realizar la consulta de provincias por la siguiente razón: " + ex.getMessage(), ex);
 	    }
