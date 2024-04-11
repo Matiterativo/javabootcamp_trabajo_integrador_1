@@ -13,17 +13,21 @@ public class Menu {
     //Opciones del submenu de busqueda de peliculas
     public static final int MENU_BUSQUEDA_BUSCAR_POR_TITULO = 1;
     public static final int MENU_BUSQUEDA_BUSCAR_POR_GENERO =2;
-    public static final int MENU_BUSQUEDA_DETALLES_PELICULA=2;
+    public static final int MENU_BUSQUEDA_DETALLES_PELICULA=3;
     
     //Opciones comunes de menu
     public static final int MENU_SALIR = 0;
+    
+    //Opciones del submenu de abm de peliculas
+    public static final int MENU_ADMINISTRAR_PELICULAS_ALTA = 1;
+    public static final int MENU_ADMINISTRAR_PELICULAS_MODIFICAR =2;
+    public static final int MENU_ADMINISTRAR_PELICULAS_ELIMINAR=3;
 	
 	public static void imprimirMenuPrincipal() {
         System.out.println("\n****** Menú Principal ******\n");
         System.out.println("1. Buscar películas por título");
         System.out.println("2. Buscar películas por género");
         System.out.println("3. Administrar películas");
-        System.out.println("4. Administrar géneros de películas");
         System.out.println("0. Salir");
 	        
 	  }
@@ -48,13 +52,6 @@ public class Menu {
 		
 	}
 	
-	public static void imprimirSubmenuAdministracionGeneros(){
-		System.out.println("\n***** Administrar géneros *****\n");
-        System.out.println("1. Agregar");
-        System.out.println("2. Modificar");
-        System.out.println("3. Eliminar");
-        System.out.println("0. Volver al menú anterior");
-	}
 	
 	//Obtiene una opcion (entero valido) para operacion de menu
     public static int obtenerOpcion(Scanner teclado) {

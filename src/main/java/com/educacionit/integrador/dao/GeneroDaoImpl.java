@@ -10,7 +10,6 @@ import java.util.List;
 import com.educacionit.integrador.dao.ds.ConnectionDB;
 import com.educacionit.integrador.dao.exceptions.DBManagerException;
 import com.educacionit.integrador.dao.models.Genero;
-import com.educacionit.integrador.dao.models.Pelicula;
 
 public class GeneroDaoImpl implements GeneroDao, ConnectionDB{
 
@@ -44,6 +43,41 @@ public class GeneroDaoImpl implements GeneroDao, ConnectionDB{
 	    }
 
 	    return generos;
+	}
+
+	@Override
+	public Genero obtener(Integer id) throws DBManagerException {
+		Genero genero = null;
+		
+	    String query = "SELECT g.id AS id, g.nombre as nombre "
+	            + "FROM generos g "
+	            + "WHERE g.id = ?";
+
+	    try (
+	    		Connection conn = getConnection();
+	    		PreparedStatement statement = conn.prepareStatement(query)
+	    	) {
+	        statement.setInt(1, id);
+
+	        try (ResultSet resultSet = statement.executeQuery()) {
+	            while (resultSet.next()) {
+	                Integer generoId = resultSet.getInt("id");
+	                String generoNombre = resultSet.getString("nombre");
+	                genero = new Genero(generoId, generoNombre);
+	                
+	            }
+	        }
+
+	        /*
+	        if (provincias.isEmpty()) {
+	            throw new DBManagerException(DBManagerException.ERROR_2, "No se encontraron provincias para el país indicado.");
+	        }*/
+
+	    } catch (SQLException ex) {
+	        throw new DBManagerException(DBManagerException.ERROR_2, "No se pudo realizar la consulta de provincias por la siguiente razón: " + ex.getMessage(), ex);
+	    }
+
+	    return genero;
 	}
 	
 	

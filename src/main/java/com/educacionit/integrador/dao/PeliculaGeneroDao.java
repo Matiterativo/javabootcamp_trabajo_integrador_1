@@ -10,6 +10,6 @@ public interface PeliculaGeneroDao {
 
 	List<Pelicula> buscarPorGenero(int idGenero) throws DBManagerException;
 
-	
+	void agregarGenero(Integer codigoPelicula, Integer idGenero) throws DBManagerException;
 	
 }
