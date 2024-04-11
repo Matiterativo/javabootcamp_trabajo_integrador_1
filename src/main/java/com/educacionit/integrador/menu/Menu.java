@@ -1,4 +1,4 @@
-package com.educacionit.menu;
+package com.educacionit.integrador.menu;
 
 import java.util.Scanner;
 

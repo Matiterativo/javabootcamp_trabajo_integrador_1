@@ -1,7 +1,12 @@
-package com.educacionit.main;
+package com.educacionit.integrador.main;
+import java.util.List;
 import java.util.Scanner;
 
-import com.educacionit.menu.Menu;
+import com.educacionit.integrador.dao.PeliculaDao;
+import com.educacionit.integrador.dao.PeliculaDaoImpl;
+import com.educacionit.integrador.dao.exceptions.DBManagerException;
+import com.educacionit.integrador.dao.models.Pelicula;
+import com.educacionit.integrador.menu.Menu;
 
 public class Main {
 	
@@ -62,23 +67,26 @@ public class Main {
         	
         	System.out.println("\n***** Búsqueda de películas por título *****");
         	System.out.println("\nIngrese el título o parte del mismo para buscar: ");
+        
+        	String tituloBusqueda = teclado.nextLine();       	
         	
-        	String titulo = teclado.nextLine();
+        	PeliculaDao peliculaDao = new PeliculaDaoImpl();
         	
-        	//Realizo la busqueda de las peliculas por titulo
+        	List<Pelicula> peliculas;
         	
-        	//Si no hay resultados mostrar mensaje correspondiente
-        	
-        	//Si hay resultados
-        	
-        	System.out.println("\nResultados de su búsqueda para el texto \"" + titulo + "\": \n");
-        	
-        	//El siguiente listado es de ejemplo
-        		
-    		System.out.println("1. El padrino");
-    		System.out.println("2. The Matrix");
-    		System.out.println("3. Titanic");
-    		System.out.println("4. V de venganza");
+			try {
+				peliculas = peliculaDao.buscarPorTitulo(tituloBusqueda);
+				
+	        	System.out.println("\nResultados de su búsqueda para el texto \"" + tituloBusqueda + "\": \n");
+				
+				for (Pelicula pelicula : peliculas) {
+	                System.out.println(pelicula.getCodigo() + ". " + pelicula.getTitulo());
+	            }
+				
+			} catch (DBManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
         	
         	Menu.imprimirSubmenuBusqueda();
         		
