@@ -90,7 +90,26 @@ public class PeliculaDaoImpl implements PeliculaDao, ConnectionDB{
 
 	@Override
 	public void modificar(Pelicula pelicula) throws DBManagerException {
-		// TODO Auto-generated method stub
+		String query = "UPDATE peliculas SET titulo= ?, sitio_oficial=?, imagen_promocional=? "
+				+ "WHERE peliculas.id = ?";
+		 try (
+	        Connection conn = getConnection();
+	        PreparedStatement statement = conn.prepareStatement(query);
+	    ) {
+	        statement.setString(1, pelicula.getTitulo());
+	        statement.setString(2, pelicula.getUrlSitioOficial());
+	        statement.setBytes(3, pelicula.getImagenPromocional()); 
+	        statement.setInt(4, pelicula.getCodigo());   
+
+	        int rowsAffected = statement.executeUpdate();
+
+	        if (rowsAffected == 0) {
+	            throw new DBManagerException(DBManagerException.ERROR_4,"No se pudo modificar la película: " + pelicula.getTitulo());
+	        }       
+	    } catch (SQLException ex) {
+	        throw new DBManagerException(DBManagerException.ERROR_4,"No se pudo modificar la película: " + pelicula.getTitulo(), ex);
+	    }
+
 		
 	}
 
@@ -103,7 +122,7 @@ public class PeliculaDaoImpl implements PeliculaDao, ConnectionDB{
 	@Override
 	public List<Pelicula> obtenerTodas() throws DBManagerException {
 		List<Pelicula> peliculas = new ArrayList<>();
-	    String query = "SELECT p.id AS codigo, "
+	    String query = "SELECT p.id AS codigo,p.sitio_oficial as sitio_oficial, "
 	    		+ "p.titulo AS titulo "
 	            + "FROM peliculas p ";
 
@@ -123,11 +142,11 @@ public class PeliculaDaoImpl implements PeliculaDao, ConnectionDB{
 	        }
 
 	        if (peliculas.isEmpty()) {
-	            throw new DBManagerException(DBManagerException.ERROR_2, "No se encontraron peliculas para el titulo indicado.");
+	            throw new DBManagerException(DBManagerException.ERROR_3, "No se encontraron peliculas.");
 	        }
 
 	    } catch (SQLException ex) {
-	        throw new DBManagerException(DBManagerException.ERROR_2, "No se pudo realizar la consulta de peliculas por la siguiente razón: " + ex.getMessage(), ex);
+	        throw new DBManagerException(DBManagerException.ERROR_3, "No se pudo realizar la consulta de peliculas por la siguiente razón: " + ex.getMessage(), ex);
 	    }
 
 	    return peliculas;

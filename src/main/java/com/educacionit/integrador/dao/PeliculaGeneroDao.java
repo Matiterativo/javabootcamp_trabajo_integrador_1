@@ -12,4 +12,6 @@ public interface PeliculaGeneroDao {
 
 	void agregarGenero(Integer codigoPelicula, Integer idGenero) throws DBManagerException;
 	
+	void eliminarGeneros(Integer codigoPelicula) throws DBManagerException;
+	
 }

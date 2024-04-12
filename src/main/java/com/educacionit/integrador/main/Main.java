@@ -356,12 +356,152 @@ public class Main {
     
     private static void modificarPelicula() {
     	
+    	PeliculaDao peliculaDao = new PeliculaDaoImpl();   	
+    	
+    	List<Pelicula> peliculas;
+    	
+		try {
+			peliculas = peliculaDao.obtenerTodas();
+			System.out.println("\nPelículas disponibles \n");
+			imprimirPeliculas(peliculas);
+			
+			Integer codigo = null;
+			boolean encontrada = false;
+			Pelicula peliculaModificar = null;
+			
+			do {
+				
+				codigo = obtenerOpcion("\nIngrese el código de la película que desea modificar: \n");
+				
+				for (Pelicula pelicula : peliculas) {
+                    if (pelicula.getCodigo() == codigo) {
+                        encontrada = true;
+                        peliculaModificar=pelicula;
+                        break;
+                    }
+                }
+                
+                if (!encontrada) {
+                    System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
+                }		
+				
+			}while(!encontrada);
+			
+			System.out.println("\nUsted va a modificar la pelicula con código: "+ peliculaModificar.getCodigo());
+			
+			System.out.println("Ingrese el nuevo título de la película:");
+	        String titulo = teclado.nextLine();
+	        peliculaModificar.setTitulo(titulo);
+
+	        System.out.println("Ingrese la nueva URL del sitio oficial:");
+	        String urlSitioOficial = teclado.nextLine();
+	        peliculaModificar.setUrlSitioOficial(urlSitioOficial);
+
+	        System.out.println("Ingrese la nueva ruta de la imagen promocional:");
+	        String rutaImagen = teclado.nextLine();
+	        
+	        byte[] imagenPromocional = null;
+	        
+	        try {
+	            imagenPromocional = leerImagenComoBytes(rutaImagen);
+	        } catch (IOException e) {
+	            System.out.println("Error al leer la imagen: " + e.getMessage());
+	            return; 
+	        }
+	        
+	        peliculaModificar.setImagenPromocional(imagenPromocional);
+	        
+	        peliculaDao.modificar(peliculaModificar);
+	        
+			
+	        GeneroDao generoDao = new GeneroDaoImpl();
+	    	
+	    	List<Genero> generos=null;
+	    	
+			try {
+				generos = generoDao.obtenerTodos();
+				
+				imprimirGeneros(generos);
+				
+				
+			} catch (DBManagerException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}    	
+			
+			
+			//Hasta aca anda
+			
+			boolean agregarMasGeneros = true;
+			List<Genero> generosAlta=new ArrayList();
+	        
+	        do {
+	            System.out.println("\nIngrese el id del género para la película:");
+	            Integer idGenero = teclado.nextInt();
+	            teclado.nextLine();
+	            
+	            Genero genero=null;
+	            
+				try {
+					genero = generoDao.obtener(idGenero);
+					
+					//si obtuvo el genero lo agrega a generosAlta
+					generosAlta.add(genero);
+
+				} catch (DBManagerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+	           
+	            System.out.println("¿Desea agregar otro género? (S/N)");
+	            String respuesta = teclado.nextLine();
+
+	            if (!respuesta.equalsIgnoreCase("S")) {
+	                agregarMasGeneros = false;
+	            }
+	        } while (agregarMasGeneros);
+	        
+	        
+	        
+	        imprimirGeneros(generosAlta);
+	        
+
+	        try {
+	        	
+	        	
+	        	
+	            
+	        	PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
+	        	
+	            //Elimino las relaciones entre la pelicula y sus generos actuales
+	            peliculaGeneroDao.eliminarGeneros(peliculaModificar.getCodigo());
+	            
+	            
+	            // Insertar las relaciones entre la película y sus géneros en la base de datos
+	            
+	            for (Genero genero : generosAlta) {
+	            	System.out.println(peliculaModificar.getCodigo()+ " " + genero.getId());
+	                peliculaGeneroDao.agregarGenero(peliculaModificar.getCodigo(), genero.getId());
+	            }
+	            
+	            System.out.println("La película se ha modificado correctamente.");
+	            
+	        } catch (DBManagerException e) {
+	            System.out.println("Error al modificar la película: " + e.getMessage());
+	        }   	
+	        
+			
+		} catch (DBManagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     }
     private static void eliminarPelicula() {
     	
     }
     
-  //Obtiene una opcion (entero valido) para operacion de menu
     public static int obtenerOpcion(String mensaje) {
         System.out.print(mensaje);
         while (!teclado.hasNextInt()) {
