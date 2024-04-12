@@ -115,8 +115,35 @@ public class PeliculaDaoImpl implements PeliculaDao, ConnectionDB{
 
 	@Override
 	public void eliminar(Integer id) throws DBManagerException {
-		// TODO Auto-generated method stub
-		
+	    String queryPeliculasGeneros = "DELETE FROM peliculas_generos WHERE pelicula_id = ?";
+	    String queryPeliculas = "DELETE FROM peliculas WHERE id = ?";
+	    
+	    try (Connection conn = getConnection();
+	         PreparedStatement statementPeliculasGeneros = conn.prepareStatement(queryPeliculasGeneros);
+	         PreparedStatement statementPeliculas = conn.prepareStatement(queryPeliculas)) {
+	        
+	        // Comenzar transacción
+	        conn.setAutoCommit(false);
+	        
+	        // Eliminar registros de peliculas_generos
+	        statementPeliculasGeneros.setInt(1, id);
+	        int rowsAffectedPeliculasGeneros = statementPeliculasGeneros.executeUpdate();
+	        
+	        // Eliminar registro de peliculas
+	        statementPeliculas.setInt(1, id);
+	        int rowsAffectedPeliculas = statementPeliculas.executeUpdate();
+	        
+	        // Confirmar la transacción si ambas eliminaciones fueron exitosas
+	        if (rowsAffectedPeliculasGeneros > 0 && rowsAffectedPeliculas > 0) {
+	            conn.commit();
+	        } else {
+	            conn.rollback(); // Revertir la transacción si ocurrió algún problema
+	            throw new DBManagerException(DBManagerException.ERROR_4, "No se pudo eliminar la película");
+	        }
+	        
+	    } catch (SQLException ex) {
+	        throw new DBManagerException(DBManagerException.ERROR_4, "Error al eliminar la película", ex);
+	    }
 	}
 
 	@Override

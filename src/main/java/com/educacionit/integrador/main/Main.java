@@ -467,10 +467,7 @@ public class Main {
 	        imprimirGeneros(generosAlta);
 	        
 
-	        try {
-	        	
-	        	
-	        	
+	        try {        	
 	            
 	        	PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
 	        	
@@ -499,6 +496,50 @@ public class Main {
     	
     }
     private static void eliminarPelicula() {
+    	
+    	PeliculaDao peliculaDao = new PeliculaDaoImpl();   	
+    	
+    	List<Pelicula> peliculas;
+    	
+		try {
+			peliculas = peliculaDao.obtenerTodas();
+			System.out.println("\nPelículas disponibles \n");
+			imprimirPeliculas(peliculas);
+			
+			Integer codigo = null;
+			boolean encontrada = false;
+			Pelicula peliculaModificar = null;
+			
+			do {
+				
+				codigo = obtenerOpcion("\nIngrese el código de la película que desea eliminar: \n");
+				
+				for (Pelicula pelicula : peliculas) {
+                    if (pelicula.getCodigo() == codigo) {
+                        encontrada = true;
+                        peliculaModificar=pelicula;
+                        break;
+                    }
+                }
+                
+                if (!encontrada) {
+                    System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
+                }		
+				
+			}while(!encontrada);
+			
+			System.out.println("\nUsted va a eliminar la pelicula con código: "+ peliculaModificar.getCodigo());
+		
+			
+			peliculaDao.eliminar(codigo);
+			
+			
+			
+		} catch (DBManagerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
     	
     }
     
