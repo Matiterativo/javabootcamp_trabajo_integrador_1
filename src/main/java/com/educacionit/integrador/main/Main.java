@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import com.educacionit.integrador.dao.GeneroDao;
 import com.educacionit.integrador.dao.GeneroDaoImpl;
 import com.educacionit.integrador.dao.PeliculaDao;
@@ -57,7 +56,6 @@ public class Main {
     	
     }
     
-    //Imprime el texto de bienvenida del programa
     private static void imprimirCabeceraPrograma(){
             System.out.println("****************************************************");
             System.out.println("*                Bienvenido a PELIGESTION          *");
@@ -78,10 +76,10 @@ public class Main {
     	List<Pelicula> peliculas;
     	
 		try {
+			
 			peliculas = peliculaDao.buscarPorTitulo(tituloBusqueda);
 			
         	System.out.println("\nResultados de su búsqueda para el texto \"" + tituloBusqueda + "\": \n");
-        	
         	
         	imprimirPeliculas(peliculas);            
             
@@ -107,12 +105,12 @@ public class Main {
     			
     		} while (codigo != 0 );     
 	
-		} catch (DBManagerException e) {
-			e.printStackTrace();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 		}	
 	
     }
-    
+      
     private static void buscarPeliculasPorGenero() {
     	
     	System.out.println("\n***** Búsqueda de películas por género *****\n");
@@ -131,6 +129,7 @@ public class Main {
         	boolean encontrado = false;
         	
         	Integer idGenero=null;
+        	
         	Genero generoEncontrado=null;
             
       		do {
@@ -153,7 +152,7 @@ public class Main {
       		List<Pelicula> peliculas;
            	
            	try {
-       			peliculas = peliculaGeneroDao.buscarPeliculaPorGenero(idGenero);
+       			peliculas = peliculaGeneroDao.buscarPeliculasPorGenero(idGenero);
        			
        			System.out.println("\nResultados de su búsqueda para el género \"" + generoEncontrado.getNombre() + "\": ");
       
@@ -183,21 +182,18 @@ public class Main {
                 
                  
        			
-       		} catch (DBManagerException e) {
-       			// TODO Auto-generated catch block
-       			e.printStackTrace();
+       		} catch (Exception ex) {
+       			System.out.println(ex.getMessage());
        		}	
             
          
 			
-		} catch (DBManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 		}    	
     	
     	
     };
-    
     
     private static void administrarPeliculas() {
     	
@@ -205,13 +201,10 @@ public class Main {
     	
     	do {
     	
-	    	//Imprimo menu de opciones ABML
 	    	Menu.imprimirSubmenuAdministracionPeliculas();
 	    	
-	    	//Pido al usuario opcion
 	    	opcion= obtenerOpcion("\nIngrese la opción deseada: \n");
 	    	
-	    	//Dependiendo de la opcion llamo al metodo correspondiente
 	    	switch (opcion) {
             case Menu.MENU_ADMINISTRAR_PELICULAS_ALTA:
             	altaPelicula();
@@ -233,7 +226,7 @@ public class Main {
     
     private static void verDetallesPelicula(Integer codigo) {
     	
-    	System.out.println("\n***** Ver detalles de pelicula *****\n");
+    	System.out.println("\n***** Detalles de pelicula *****");
 	    	
 		try {
 			
@@ -241,18 +234,35 @@ public class Main {
 			
 			Pelicula pelicula = peliculaDao.obtener(codigo);
 			
-			System.out.println(pelicula.toString());	
+			System.out.println("\nCódigo: " + codigo);
+			System.out.println("Titulo: " + pelicula.getTitulo());
+			System.out.println("Sitio web oficial: " + pelicula.getUrlSitioOficial());
 			
-			//Buscar e imprimir generos de la pelicula con el Dao peliculagenerodao
+			PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
 			
-		} catch (DBManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+			
+				List<Genero> generos = peliculaGeneroDao.buscarGenerosPorPelicula(codigo);
+			
+				String listaGeneros="";
+				
+				for (Genero genero: generos) {
+					listaGeneros+= genero.getNombre()+" ";				
+				}
+				
+				System.out.println("Generos: " + listaGeneros);
+				
+			}catch(Exception ex) {
+				System.out.println(ex.getMessage());
+			}
+			
+			
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 		}	          	
     }
     
     private static void altaPelicula() {
-
 
         System.out.println("Ingrese el título de la película:");
         String titulo = teclado.nextLine();
@@ -263,17 +273,14 @@ public class Main {
         System.out.println("Ingrese la ruta de la imagen promocional:");
         String rutaImagen = teclado.nextLine();
 
-        
         byte[] imagenPromocional = null;
-        
         
         try {
             imagenPromocional = leerImagenComoBytes(rutaImagen);
         } catch (IOException e) {
             System.out.println("Error al leer la imagen: " + e.getMessage());
             return; 
-        }
-                    
+        }                    
             
         GeneroDao generoDao = new GeneroDaoImpl();
     	
@@ -284,41 +291,44 @@ public class Main {
 			
 			imprimirGeneros(generos);
 			
+		} catch (Exception ex) {
 			
-		} catch (DBManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}    	
+			System.out.println(ex.getMessage());
+			
+		}   			
 		
-		boolean agregarMasGeneros = true;
-		List<Genero> generosAlta=new ArrayList();
+		List<Genero> generosAlta=new ArrayList<>();
+		
+		Integer idGenero=null;
         
         do {
-            System.out.println("\nIngrese el id del género para la película:");
-            Integer idGenero = teclado.nextInt();
-            teclado.nextLine();
             
-            Genero genero;
+            idGenero = obtenerOpcion("\nIngrese el id del género para la película o 0 para finalizar:");
             
-			try {
-				genero = generoDao.obtener(idGenero);
-				generosAlta.add(genero);
-
-			} catch (DBManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (idGenero == 0) {				
+				
+				if (generosAlta.size()==0) {					
+					System.out.println("La pelicula debe poseer al menos 1 genero");				
+				}
+				
 			}
+			
+			else {
+            
+	            try {
+					
+					Genero genero = generoDao.obtener(idGenero);					
+					generosAlta.add(genero);
+	
+				} catch (Exception ex) {
+					
+					System.out.println(ex.getMessage());
+					
+				}
+			}
+            
+        } while (!(idGenero==0 && generosAlta.size()>0));
 
-           
-            System.out.println("¿Desea agregar otro género? (S/N)");
-            String respuesta = teclado.nextLine();
-
-            if (!respuesta.equalsIgnoreCase("S")) {
-                agregarMasGeneros = false;
-            }
-        } while (agregarMasGeneros);
-
-        
         Pelicula pelicula = new Pelicula(titulo, urlSitioOficial, imagenPromocional);
 
         try {
@@ -326,22 +336,20 @@ public class Main {
             
             int idInsertada = peliculaDao.insertar(pelicula);
             
-            
-            // Insertar las relaciones entre la película y sus géneros en la base de datos
             PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
+            
             for (Genero genero : generosAlta) {
                 peliculaGeneroDao.agregarGenero(idInsertada, genero.getId());
             }
             
             System.out.println("La película se ha insertado correctamente.");
             
-        } catch (DBManagerException e) {
-            System.out.println("Error al insertar la película: " + e.getMessage());
+        } catch (Exception ex) {
+        	System.out.println(ex.getMessage());
         }   	
     	
     }
 
-    
     private static byte[] leerImagenComoBytes(String rutaImagen) throws IOException {
         File file = new File(rutaImagen);
         byte[] bytesArray = new byte[(int) file.length()];
@@ -353,7 +361,6 @@ public class Main {
         return bytesArray;
     }
     
-    
     private static void modificarPelicula() {
     	
     	PeliculaDao peliculaDao = new PeliculaDaoImpl();   	
@@ -362,7 +369,9 @@ public class Main {
     	
 		try {
 			peliculas = peliculaDao.obtenerTodas();
+			
 			System.out.println("\nPelículas disponibles \n");
+			
 			imprimirPeliculas(peliculas);
 			
 			Integer codigo = null;
@@ -387,9 +396,11 @@ public class Main {
 				
 			}while(!encontrada);
 			
-			System.out.println("\nUsted va a modificar la pelicula con código: "+ peliculaModificar.getCodigo());
+			System.out.println("\nUsted va a modificar la pelicula con los siguientes detalles: \n");
 			
-			System.out.println("Ingrese el nuevo título de la película:");
+			verDetallesPelicula(peliculaModificar.getCodigo());			
+			
+			System.out.println("\nIngrese el nuevo título de la película:");
 	        String titulo = teclado.nextLine();
 	        peliculaModificar.setTitulo(titulo);
 
@@ -413,7 +424,6 @@ public class Main {
 	        
 	        peliculaDao.modificar(peliculaModificar);
 	        
-			
 	        GeneroDao generoDao = new GeneroDaoImpl();
 	    	
 	    	List<Genero> generos=null;
@@ -423,78 +433,72 @@ public class Main {
 				
 				imprimirGeneros(generos);
 				
-				
-			} catch (DBManagerException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} catch (Exception ex) {
+				System.out.println(ex.getMessage());
 			}    	
 			
+			System.out.println("\nLos géneros actuales serán remplazados por los nuevos\n");
 			
-			//Hasta aca anda
+			List<Genero> generosModificacion=new ArrayList<>();
 			
-			boolean agregarMasGeneros = true;
-			List<Genero> generosAlta=new ArrayList();
+			Integer idGenero=null;
 	        
 	        do {
-	            System.out.println("\nIngrese el id del género para la película:");
-	            Integer idGenero = teclado.nextInt();
-	            teclado.nextLine();
 	            
-	            Genero genero=null;
+	            idGenero = obtenerOpcion("\nIngrese el id del género para la película o 0 para finalizar:");
 	            
-				try {
-					genero = generoDao.obtener(idGenero);
+				if (idGenero == 0) {				
 					
-					//si obtuvo el genero lo agrega a generosAlta
-					generosAlta.add(genero);
-
-				} catch (DBManagerException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					if (generosModificacion.size()==0) {					
+						System.out.println("La pelicula debe poseer al menos 1 genero");				
+					}
+					
 				}
-
-	           
-	            System.out.println("¿Desea agregar otro género? (S/N)");
-	            String respuesta = teclado.nextLine();
-
-	            if (!respuesta.equalsIgnoreCase("S")) {
-	                agregarMasGeneros = false;
-	            }
-	        } while (agregarMasGeneros);
+				
+				else {
+	            
+		            try {
+						
+						Genero genero = generoDao.obtener(idGenero);						
+						generosModificacion.add(genero);
+		
+					} catch (Exception ex) {
+						
+						System.out.println(ex.getMessage());
+						
+					}
+				}
+	            
+	        } while (!(idGenero==0 && generosModificacion.size()>0));
 	        
 	        
-	        
-	        imprimirGeneros(generosAlta);
-	        
-
 	        try {        	
 	            
 	        	PeliculaGeneroDao peliculaGeneroDao = new PeliculaGeneroDaoImpl();
 	        	
-	            //Elimino las relaciones entre la pelicula y sus generos actuales
 	            peliculaGeneroDao.eliminarGeneros(peliculaModificar.getCodigo());
 	            
-	            
-	            // Insertar las relaciones entre la película y sus géneros en la base de datos
-	            
-	            for (Genero genero : generosAlta) {
+	            for (Genero genero : generosModificacion) {
+	            	
 	            	System.out.println(peliculaModificar.getCodigo()+ " " + genero.getId());
+	            	
 	                peliculaGeneroDao.agregarGenero(peliculaModificar.getCodigo(), genero.getId());
+	                
 	            }
 	            
 	            System.out.println("La película se ha modificado correctamente.");
 	            
-	        } catch (DBManagerException e) {
-	            System.out.println("Error al modificar la película: " + e.getMessage());
+	        } catch (Exception ex) {
+	        	System.out.println(ex.getMessage());
 	        }   	
 	        
 			
-		} catch (DBManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 		}
     	
     }
+    
     private static void eliminarPelicula() {
     	
     	PeliculaDao peliculaDao = new PeliculaDaoImpl();   	
@@ -508,36 +512,34 @@ public class Main {
 			
 			Integer codigo = null;
 			boolean encontrada = false;
-			Pelicula peliculaModificar = null;
 			
 			do {
 				
-				codigo = obtenerOpcion("\nIngrese el código de la película que desea eliminar: \n");
+				codigo = obtenerOpcion("\nIngrese el código de la película que desea eliminar o 0 para volver al menú: \n");
 				
-				for (Pelicula pelicula : peliculas) {
-                    if (pelicula.getCodigo() == codigo) {
-                        encontrada = true;
-                        peliculaModificar=pelicula;
-                        break;
-                    }
-                }
+				if (codigo!=0) {				
+				
+					for (Pelicula pelicula : peliculas) {
+	                    if (pelicula.getCodigo() == codigo) {
+	                        encontrada = true;
+	                        break;
+	                    }
+	                }
                 
-                if (!encontrada) {
-                    System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
-                }		
+	                if (!encontrada) {
+	                    System.out.println("\nEl código de película ingresado no se encuentra en los resultados.");
+	                }
+	                
+	                else {
+	                	peliculaDao.eliminar(codigo);
+	                	System.out.println("\nSe eliminió la película con código: "+ codigo);
+	                }
+				}
 				
-			}while(!encontrada);
+			}while(codigo!=0);
 			
-			System.out.println("\nUsted va a eliminar la pelicula con código: "+ peliculaModificar.getCodigo());
-		
-			
-			peliculaDao.eliminar(codigo);
-			
-			
-			
-		} catch (DBManagerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 		}
     	
     	
@@ -545,11 +547,13 @@ public class Main {
     
     public static int obtenerOpcion(String mensaje) {
         System.out.print(mensaje);
+        
         while (!teclado.hasNextInt()) {
             System.out.println("Por favor, ingrese un número válido.");
             System.out.print(mensaje);
             teclado.next();
         }
+        
         int opcion = teclado.nextInt();
         teclado.nextLine();
         return opcion;
