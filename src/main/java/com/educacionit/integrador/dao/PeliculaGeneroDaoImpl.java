@@ -9,12 +9,13 @@ import java.util.List;
 
 import com.educacionit.integrador.dao.ds.ConnectionDB;
 import com.educacionit.integrador.dao.exceptions.DBManagerException;
+import com.educacionit.integrador.dao.models.Genero;
 import com.educacionit.integrador.dao.models.Pelicula;
 
 public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
 
 	@Override
-	public List<Pelicula> buscarPeliculaPorGenero(int idGenero) throws DBManagerException {
+	public List<Pelicula> buscarPeliculasPorGenero(int idGenero) throws DBManagerException {
 		List<Pelicula> peliculas = new ArrayList<>();
 	    String query = "SELECT p.id AS codigo, "
 	    		+ "p.titulo AS titulo  "
@@ -37,11 +38,11 @@ public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
 	        }
 
 	        if (peliculas.isEmpty()) {
-	            throw new DBManagerException(DBManagerException.ERROR_2, "No se encontraron peliculas para el titulo indicado.");
+	            throw new DBManagerException(DBManagerException.ERROR_9, "No se encontraron peliculas para el género indicado.");
 	        }
 
 	    } catch (SQLException ex) {
-	        throw new DBManagerException(DBManagerException.ERROR_2, "No se pudo realizar la consulta de peliculas por la siguiente razón: " + ex.getMessage(), ex);
+	        throw new DBManagerException(DBManagerException.ERROR_9, "No se pudo realizar la consulta de peliculas por la siguiente razón: " + ex.getMessage(), ex);
 	    }
 
 	    return peliculas;
@@ -60,12 +61,12 @@ public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DBManagerException(DBManagerException.ERROR_4,
+                throw new DBManagerException(DBManagerException.ERROR_11,
                         "No se pudo agregar la relación entre la película y el género.");
             }
 
         } catch (SQLException ex) {
-            throw new DBManagerException(DBManagerException.ERROR_4,
+            throw new DBManagerException(DBManagerException.ERROR_11,
                     "Error al agregar la relación entre la película y el género.", ex);
         }
     }
@@ -82,15 +83,50 @@ public class PeliculaGeneroDaoImpl implements PeliculaGeneroDao, ConnectionDB{
             int rowsAffected = statement.executeUpdate();
 
             if (rowsAffected == 0) {
-                throw new DBManagerException(DBManagerException.ERROR_4,
+                throw new DBManagerException(DBManagerException.ERROR_12,
                         "No se pudo eliminar la relación entre la película y el género.");
             }
 
         } catch (SQLException ex) {
-            throw new DBManagerException(DBManagerException.ERROR_4,
+            throw new DBManagerException(DBManagerException.ERROR_12,
                     "Error al eliminar la relación entre la película y el género.");
         }
 
+		
+	}
+
+	@Override
+	public List<Genero> buscarGenerosPorPelicula(int codigoPelicula) throws DBManagerException {
+		List<Genero> generos = new ArrayList<>();
+	    String query = "SELECT g.id AS id, "
+	    		+ "g.nombre AS nombre  "
+	            + "FROM generos g, peliculas_generos pg "
+	            + "WHERE g.id= pg.genero_id AND pg.pelicula_id = ? ";
+
+	    try (
+	    		Connection conn = getConnection();
+	    		PreparedStatement statement = conn.prepareStatement(query)
+	    	) {
+	        statement.setInt(1, codigoPelicula);
+
+	        try (ResultSet resultSet = statement.executeQuery()) {
+	            while (resultSet.next()) {
+	                Integer id = resultSet.getInt("id");
+	                String nombre = resultSet.getString("nombre");
+	                Genero genero = new Genero(id, nombre);
+	                generos.add(genero);
+	            }
+	        }
+
+	        if (generos.isEmpty()) {
+	            throw new DBManagerException(DBManagerException.ERROR_8, "No se encontraron generos para la pelicula indicada.");
+	        }
+
+	    } catch (SQLException ex) {
+	        throw new DBManagerException(DBManagerException.ERROR_8, "No se pudo realizar la consulta de peliculas por la siguiente razón: " + ex.getMessage(), ex);
+	    }
+
+	    return generos;	
 		
 	}
 

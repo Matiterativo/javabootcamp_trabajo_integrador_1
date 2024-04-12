@@ -67,11 +67,16 @@ public class GeneroDaoImpl implements GeneroDao, ConnectionDB{
 	                
 	            }
 	        }
+	        
+	        if (genero == null) {	        	
+	            throw new DBManagerException(DBManagerException.ERROR_10, "No se encontro genero para el id indicado.");
+	        } 
+	        
 
 	    } catch (SQLException ex) {
-	        throw new DBManagerException(DBManagerException.ERROR_2, "No se pudo realizar la consulta de provincias por la siguiente razón: " + ex.getMessage(), ex);
+	        throw new DBManagerException(DBManagerException.ERROR_10, "No se pudo realizar la consulta de genero por la siguiente razón: " + ex.getMessage(), ex);
 	    }
-
+	    
 	    return genero;
 	}
 	

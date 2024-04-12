@@ -10,6 +10,11 @@ public class DBManagerException extends Exception {
 	 * Error 5: modificar pelicula
 	 * Error 6: eliminar pelicula
 	 * Error 7: cerrar conexion a la db
+	 * Error 8: buscar generos por pelicula
+	 * Error 9: buscar peliculas por genero
+	 * Error 10: obtener genero por id
+	 * Error 11: error al agregar generos a pelicula
+	 * Error 12: error al eliminar generos de pelicula
 	 */
 	
 	public static final int ERROR_1= 1;
@@ -19,6 +24,11 @@ public class DBManagerException extends Exception {
 	public static final int ERROR_5= 5;
 	public static final int ERROR_6= 6;
 	public static final int ERROR_7= 7;
+	public static final int ERROR_8= 8;
+	public static final int ERROR_9= 9;
+	public static final int ERROR_10= 10;
+	public static final int ERROR_11= 11;
+	public static final int ERROR_12= 12;
 
 	private Integer error;
 	
@@ -57,6 +67,16 @@ public class DBManagerException extends Exception {
 			return "Se produjo un error al eliminar la pelicula: " + super.getMessage();
 		case ERROR_7: 
 			return "Se produjo un error cerrando la conexión a la base de datos: " + super.getMessage();		
+		case ERROR_8: 
+			return "Se produjo un error al buscar generos por pelicula: " + super.getMessage();		
+		case ERROR_9: 
+			return "Se produjo un error al buscar peliculas por genero: " + super.getMessage();
+		case ERROR_10: 
+			return "Se produjo un error al buscar genero: " + super.getMessage();
+		case ERROR_11: 
+			return "Se produjo un error al agregar genero a pelicula: " + super.getMessage();
+		case ERROR_12: 
+			return "Se produjo un error al eliminar generos de pelicula: " + super.getMessage();
 		default:
 			return super.getMessage();		
 		}

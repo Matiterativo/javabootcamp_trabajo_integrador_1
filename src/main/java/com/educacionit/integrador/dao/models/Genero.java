@@ -32,6 +32,13 @@ public class Genero {
 	public int getId() {
 		return id;
 	}
+
+	@Override
+	public String toString() {
+		return "Genero [id=" + id + ", nombre=" + nombre + "]";
+	}
+	
+	
     
 
 }
