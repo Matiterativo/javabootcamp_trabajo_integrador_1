@@ -517,7 +517,9 @@ public class Main {
 				
 				codigo = obtenerOpcion("\nIngrese el código de la película que desea eliminar o 0 para volver al menú: \n");
 				
-				if (codigo!=0) {				
+				if (codigo!=0) {	
+					
+					encontrada = false;
 				
 					for (Pelicula pelicula : peliculas) {
 	                    if (pelicula.getCodigo() == codigo) {
